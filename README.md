@@ -1,4 +1,4 @@
-# graph_rsnap_run
+## graph_rsnap_run
 
 ### synopsis
 This script is designed to push metrics to a give graphite host in order to check the time to completion of Rsnapshot runs. 
