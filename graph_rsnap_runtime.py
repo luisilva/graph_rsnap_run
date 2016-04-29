@@ -207,14 +207,14 @@ class rsnap_runtime:
 if __name__ == '__main__':
     # default global configs
     # production log path
-    #rsnap_log_home = '/var/log/rsnapshot/'
+    rsnap_log_home = '/var/log/rsnapshot/'
     # testing log path
-    rsnap_log_home = 'sample_data/'
+    #rsnap_log_home = 'sample_data/'
     # service name <<rsnap_service_name>>.<datacenter>.<hostname>.\
     #<metricName> metric epoch
     rsnap_service_name = 'rsnap'
     # log area for messages that come out of this script
-    rsnap_runtime_log = 'test/rsnap_runtime.log'
+    rsnap_runtime_log = '/var/log/rsnap_runtime.log'
     # log level (debug = True,default = False)
     #debug = True
     # Init logging
@@ -226,7 +226,5 @@ if __name__ == '__main__':
     graphite_server = 'graph.rc.fas.harvard.edu'
     # graphite intake port
     graphite_port = '2003'
-    # hours to rollback in logs
-    rollback_threshold = '24'
     # Kick off main script
     rsnap_runtime()
