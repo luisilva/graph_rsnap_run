@@ -87,7 +87,7 @@ class rsnap_runtime:
             if self.graph_list:
                 last_time_dict[log] = self.graph_list[-1]
             logger.debug("%s" % self.graph_list)
-            #self.graph_data()
+            self.graph_data()
         self.last_times_dict.update(last_time_dict)
 
     def get_job_times(self):
@@ -173,7 +173,11 @@ class rsnap_runtime:
                         zip(self.end_times, self.start_times)]
             for end, times in zip(self.end_times, duration):
                 end_epoch = end.strftime('%s')
-                metric = int(times.total_seconds())
+                self.times = times
+                self.total_secs()
+                metric = self.metric
+                ## This only works in Python 2.7.x
+                #metric = int(times.total_seconds())
                 graph_list = "%s.%s.%s.%s %s %s\n" \
                     % (rsnap_service_name, datacenter, self.hostname,
                         log_name, metric, end_epoch)
@@ -181,6 +185,9 @@ class rsnap_runtime:
         if len(self.start_times) > (len(self.end_times) + 1):
             logger.critical("Can't parse this logs properly. You may want to "
                             "clear it.: %s" % self.log_path)
+
+    def total_secs(self):
+        self.metric = int((self.times.days * 86400) + self.times.seconds) 
 
     def graph_data(self):
         # Open Socket and push all the metrics we have accumulated
