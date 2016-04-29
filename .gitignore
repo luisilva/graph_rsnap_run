@@ -25,6 +25,7 @@
 *.log
 *.sql
 *.sqlite
+*.p
 
 # OS generated files #
 ######################
@@ -39,3 +40,4 @@ Thumbs.db
 # sample data dir #
 ###################
 sample_data
+test
