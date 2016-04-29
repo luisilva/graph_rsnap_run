@@ -55,7 +55,9 @@ class rsnap_runtime:
 
     def get_last_times(self):
         if os.path.isfile("save.p"):
-            self.previous_times = pickle.load( open( "save.p", "rb" ) )
+            self.last_times_dict = pickle.load(open("save.p", "rb"))
+        else:
+            self.last_times_dict = {}
 
     def get_log_list(self):
         ls_log = "ls %s" % rsnap_log_home
@@ -77,15 +79,16 @@ class rsnap_runtime:
             logger.critical("%s" % e)
 
     def loop_logs(self):
-        self.last_times_dict = {}
+        last_time_dict = {}
         for log in self.log_list.splitlines():
             self.log_path = rsnap_log_home + log
             self.get_job_times()
             self.parse_job_durations()
             if self.graph_list:
-                self.last_times_dict[log] = self.graph_list[-1]
+                last_time_dict[log] = self.graph_list[-1]
             logger.debug("%s" % self.graph_list)
             #self.graph_data()
+        self.last_times_dict.update(last_time_dict)
 
     def get_job_times(self):
         logger.debug("looking at log: %s" % self.log_path)
@@ -94,9 +97,7 @@ class rsnap_runtime:
         self.end_times = []
         echo_count = 0
         with open(self.log_path) as f:
-            try:
-                self.previous_times
-            except AttributeError:
+            if not self.last_times_dict:
                 for line in f:
                     if 'echo' in line:
                         echo_count += 1
@@ -114,9 +115,10 @@ class rsnap_runtime:
                         self.end_times.append(endd)
             else:
                 log_key = os.path.basename(self.log_path)
-                last_times_dict = pickle.load( open( "save.p", "rb" ) )
+                self.last_times_dict = pickle.load(open("save.p", "rb"))
                 try:
-                    last_time = int(last_times_dict[log_key].split()[2].strip("\n"))
+                    last_time = int(self.last_times_dict[log_key]
+                                    .split()[2].strip("\n"))
                 except KeyError:
                     for line in f:
                         if 'echo' in line:
@@ -134,8 +136,10 @@ class rsnap_runtime:
                             endd = datetime.strptime(end_date, date_format)
                             self.end_times.append(endd)
                 else:
-                    last_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(last_time))
-                    last_time = datetime.strptime(last_time, "%Y-%m-%d %H:%M:%S")
+                    last_time = time.strftime('%Y-%m-%d %H:%M:%S',
+                                              time.localtime(last_time))
+                    last_time = datetime.strptime(last_time,
+                                                  "%Y-%m-%d %H:%M:%S")
                     for line in f:
                         if 'echo' in line:
                             start_date = line.split()[0].strip("[").strip("]")
@@ -196,9 +200,9 @@ class rsnap_runtime:
         s.close()
 
     def set_last_times(self):
-        print self.last_times_dict
+        logger.info(self.last_times_dict)
         if bool(self.last_times_dict):
-            pickle.dump( self.last_times_dict, open( "save.p", "wb" ) )
+            pickle.dump(self.last_times_dict, open("save.p", "wb"))
 
 if __name__ == '__main__':
     # default global configs
