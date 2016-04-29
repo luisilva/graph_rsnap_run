@@ -190,8 +190,9 @@ class rsnap_runtime:
         self.metric = int((self.times.days * 86400) + self.times.seconds) 
 
     def graph_data(self):
+        content = []
         # Open Socket and push all the metrics we have accumulated
-        content = self.graph_list
+        content = "".join(self.graph_list)
         logger.debug("<<< Opening Connection >>>")
         logger.debug("Pushing data: \n %s" % content)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -207,7 +208,7 @@ class rsnap_runtime:
         s.close()
 
     def set_last_times(self):
-        logger.info(self.last_times_dict)
+        logger.debug(self.last_times_dict)
         if bool(self.last_times_dict):
             pickle.dump(self.last_times_dict, open("save.p", "wb"))
 
@@ -232,6 +233,6 @@ if __name__ == '__main__':
     # graphite server name
     graphite_server = 'graph.rc.fas.harvard.edu'
     # graphite intake port
-    graphite_port = '2003'
+    graphite_port = 2003
     # Kick off main script
     rsnap_runtime()
