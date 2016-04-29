@@ -160,7 +160,7 @@ class rsnap_runtime:
 
     def parse_job_durations(self):
         self.graph_list = []
-        log_name = self.log_path.split('/')[-1].strip(".log")
+        log_name = self.log_path.split('/')[-1].replace(".log", "")
         if len(self.start_times) == (len(self.end_times) + 1):
             del self.start_times[-1]
         logger.debug("Lenght of Rsnap start "
