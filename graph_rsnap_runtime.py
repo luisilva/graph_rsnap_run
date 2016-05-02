@@ -54,8 +54,8 @@ class rsnap_runtime:
             logger.critical("%s" % e)
 
     def get_last_times(self):
-        if os.path.isfile("save.p"):
-            self.last_times_dict = pickle.load(open("save.p", "rb"))
+        if os.path.isfile(pickle_file):
+            self.last_times_dict = pickle.load(open(pickle_file, "rb"))
         else:
             self.last_times_dict = {}
 
@@ -87,7 +87,7 @@ class rsnap_runtime:
             if self.graph_list:
                 last_time_dict[log] = self.graph_list[-1]
             logger.debug("%s" % self.graph_list)
-            self.graph_data()
+            #self.graph_data()
         self.last_times_dict.update(last_time_dict)
 
     def get_job_times(self):
@@ -115,7 +115,7 @@ class rsnap_runtime:
                         self.end_times.append(endd)
             else:
                 log_key = os.path.basename(self.log_path)
-                self.last_times_dict = pickle.load(open("save.p", "rb"))
+                self.last_times_dict = pickle.load(open(pickle_file, "rb"))
                 try:
                     last_time = int(self.last_times_dict[log_key]
                                     .split()[2].strip("\n"))
@@ -210,7 +210,7 @@ class rsnap_runtime:
     def set_last_times(self):
         logger.debug(self.last_times_dict)
         if bool(self.last_times_dict):
-            pickle.dump(self.last_times_dict, open("save.p", "wb"))
+            pickle.dump(self.last_times_dict, open(pickle_file, "wb"))
 
 if __name__ == '__main__':
     # default global configs
@@ -227,6 +227,9 @@ if __name__ == '__main__':
     #debug = True
     # Init logging
     logger = logging.getLogger(rsnap_runtime_log)
+    # Last state Pickle file location. This stores the metrics and \
+    # know date in order to prevent pushing the same metrics twice.
+    pickle_file = '/opt/rsnap_runtime/save.p'
     # datacenter field <rsnap_service_name>.<<datacenter>>.<hostname>.\
     #<metricName> metric epoch
     datacenter = 'holyoke'
