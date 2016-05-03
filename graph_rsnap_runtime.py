@@ -87,7 +87,7 @@ class rsnap_runtime:
             if self.graph_list:
                 last_time_dict[log] = self.graph_list[-1]
             logger.debug("%s" % self.graph_list)
-            #self.graph_data()
+            self.graph_data()
         self.last_times_dict.update(last_time_dict)
 
     def get_job_times(self):
